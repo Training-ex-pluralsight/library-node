@@ -6,7 +6,6 @@ const path = require('path');
 
 const app = express();
 const port = process.env.PORT || 3000;
-const bookRouter = express.Router();
 
 app.use(morgan('combined'));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -16,12 +15,14 @@ app.use('/js', express.static(path.join(__dirname, 'node_modules', 'jquery', 'di
 app.set('views', './src/views');
 app.set('view engine', 'ejs');
 
-bookRouter.route('/books')
-  .get((req, res) => {
-    res.send('hello books');
-  });
+const nav = [
+  { link: '/books', title: 'Book' },
+  { link: '/authors', title: 'Author' }
+];
 
-app.use('/', bookRouter);
+const bookRouter = require('./src/routes/bookRoutes')(nav);
+
+app.use('/books', bookRouter);
 
 app.get('/', (req, res) => {
   res.render(
